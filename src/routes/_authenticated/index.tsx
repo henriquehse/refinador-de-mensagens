@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { ArrowRight, Copy, Check, Loader2, RotateCcw, Wand2, KeyRound, ClipboardPaste, Sparkles, Zap, ShieldCheck, ArrowRightLeft, Trash2, Mic, ExternalLink, Sparkle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowRight, Copy, Check, Loader2, RotateCcw, Wand2, KeyRound, ClipboardPaste, Sparkles, Zap, ShieldCheck, ArrowRightLeft, Trash2, Mic, ZoomIn, ZoomOut, Type } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +22,15 @@ type Preset =
   | "casual_low"
   | "casual_med"
   | "casual_high";
+
+type FontSize = "sm" | "base" | "lg" | "xl";
+
+const fontSizeConfig: Record<FontSize, { textarea: string; output: string; label: string }> = {
+  sm: { textarea: "text-sm leading-relaxed", output: "text-sm leading-relaxed", label: "Padrão" },
+  base: { textarea: "text-base leading-relaxed", output: "text-base leading-relaxed", label: "Médio" },
+  lg: { textarea: "text-lg leading-relaxed font-medium", output: "text-lg sm:text-xl leading-relaxed font-medium", label: "Grande" },
+  xl: { textarea: "text-xl sm:text-2xl leading-relaxed font-semibold", output: "text-xl sm:text-2xl leading-relaxed font-semibold", label: "Muito Grande" },
+};
 
 const PRIMARY: { id: Preset; label: string; hint: string }[] = [
   { id: "improve", label: "Refinar Mensagem", hint: "Melhora geral mantendo o tom original" },
@@ -69,6 +78,32 @@ function TransformerPage() {
   const [activePreset, setActivePreset] = useState<Preset>("improve");
   const [copied, setCopied] = useState(false);
   const [showClearAlert, setShowClearAlert] = useState(false);
+  const [fontSizeLevel, setFontSizeLevel] = useState<FontSize>("lg");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("refinador_font_size") as FontSize;
+      if (saved && fontSizeConfig[saved]) {
+        setFontSizeLevel(saved);
+      }
+    }
+  }, []);
+
+  function changeFontSize(direction: "increase" | "decrease") {
+    const levels: FontSize[] = ["sm", "base", "lg", "xl"];
+    const currentIndex = levels.indexOf(fontSizeLevel);
+    let nextIndex = currentIndex;
+    if (direction === "increase" && currentIndex < levels.length - 1) {
+      nextIndex = currentIndex + 1;
+    } else if (direction === "decrease" && currentIndex > 0) {
+      nextIndex = currentIndex - 1;
+    }
+    const nextLevel = levels[nextIndex];
+    setFontSizeLevel(nextLevel);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("refinador_font_size", nextLevel);
+    }
+  }
 
   const mutation = useMutation({
     mutationFn: (preset: Preset) =>
@@ -126,10 +161,10 @@ function TransformerPage() {
 
   return (
     <AppShell>
-      <section className="ambient-glow relative space-y-10">
+      <section className="ambient-glow relative space-y-8">
         
         {/* HERO SECTION IMPRESSIONANTE COM DEMO DE IMPACTO */}
-        <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-b from-white via-slate-50/50 to-emerald-50/30 p-6 sm:p-12 shadow-xl shadow-slate-200/50">
+        <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-b from-white via-slate-50/50 to-emerald-50/30 p-6 sm:p-10 shadow-xl shadow-slate-200/50">
           <div className="grid gap-8 lg:grid-cols-12 items-center">
             
             {/* Chamada Principal */}
@@ -229,6 +264,40 @@ function TransformerPage() {
           </div>
         </div>
 
+        {/* CONTROLE DE ACESSIBILIDADE E TAMANHO DE FONTE (A- / A+) */}
+        <div className="flex items-center justify-between rounded-2xl bg-white p-3.5 px-5 border border-slate-200 shadow-sm flex-wrap gap-3">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
+            <Type className="h-4 w-4 text-emerald-600" />
+            <span>Tamanho do Texto no Leitor:</span>
+            <span className="font-mono text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md font-extrabold border border-emerald-200">
+              {fontSizeConfig[fontSizeLevel].label}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => changeFontSize("decrease")}
+              disabled={fontSizeLevel === "sm"}
+              className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-extrabold text-slate-700 transition-all hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
+              title="Diminuir tamanho das letras (A-)"
+            >
+              <ZoomOut className="h-3.5 w-3.5" />
+              <span>A-</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => changeFontSize("increase")}
+              disabled={fontSizeLevel === "xl"}
+              className="inline-flex items-center gap-1 rounded-xl border border-emerald-600/30 bg-emerald-50 px-3.5 py-1.5 text-xs font-extrabold text-emerald-800 transition-all hover:bg-emerald-100 disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
+              title="Aumentar tamanho das letras (A+)"
+            >
+              <ZoomIn className="h-3.5 w-3.5 text-emerald-600" />
+              <span>A+</span>
+            </button>
+          </div>
+        </div>
+
         {/* PAINEL DUAL DE ENTRADA E SAÍDA LUMINOSO */}
         <div className="grid gap-6 lg:grid-cols-2">
           
@@ -271,7 +340,10 @@ function TransformerPage() {
               value={input}
               onChange={(e) => setInput(e.target.value.slice(0, 8000))}
               placeholder="Clique em 'Colar Texto' acima, digite ou dite o rascunho da sua mensagem..."
-              className="min-h-[220px] sm:min-h-[300px] resize-none border-0 bg-transparent px-0 text-base leading-relaxed text-slate-900 placeholder:text-slate-400 shadow-none focus-visible:ring-0 font-sans"
+              className={cn(
+                "min-h-[220px] sm:min-h-[300px] resize-none border-0 bg-transparent px-0 text-slate-900 placeholder:text-slate-400 shadow-none focus-visible:ring-0 font-sans transition-all duration-200",
+                fontSizeConfig[fontSizeLevel].textarea
+              )}
             />
 
             <div className="flex justify-end border-t border-slate-100 pt-2">
@@ -299,14 +371,14 @@ function TransformerPage() {
               )}
             </div>
 
-            <div className="min-h-[220px] sm:min-h-[300px] whitespace-pre-wrap text-base leading-relaxed text-slate-900 break-words font-sans">
+            <div className="min-h-[220px] sm:min-h-[300px] whitespace-pre-wrap text-slate-900 break-words font-sans">
               {mutation.isPending ? (
                 <div className="flex h-full min-h-[220px] sm:min-h-[300px] flex-col items-center justify-center gap-3 text-slate-500">
                   <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
                   <span className="font-mono text-xs uppercase tracking-widest font-bold text-emerald-700">Refinando com IA...</span>
                 </div>
               ) : output ? (
-                <div className="rounded-2xl bg-white p-5 border border-slate-200 shadow-sm text-slate-900 leading-relaxed font-medium">
+                <div className={cn("rounded-2xl bg-white p-5 border border-slate-200 shadow-sm text-slate-900 font-medium transition-all duration-200", fontSizeConfig[fontSizeLevel].output)}>
                   {output}
                 </div>
               ) : (
@@ -374,7 +446,6 @@ function TransformerPage() {
             />
           </div>
         </div>
-
 
         {profile && (
           <p className="text-center font-mono text-xs text-slate-500 font-medium pb-4">

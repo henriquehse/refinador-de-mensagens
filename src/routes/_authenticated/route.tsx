@@ -3,11 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async () => {
+    // No servidor (SSR), permite passar para o cliente verificar o localStorage
     if (typeof window === "undefined") {
-      if (import.meta.env.DEV) {
-        return { user: { id: "dev-user", email: "dev@local.com" } as any };
-      }
-      throw redirect({ to: "/auth" });
+      return { user: null };
     }
 
     try {
@@ -17,11 +15,12 @@ export const Route = createFileRoute("/_authenticated")({
       // ignore
     }
 
-    // No ambiente local de desenvolvimento, permite bypass. Em produção (Vercel), exige login.
+    // No ambiente de desenvolvimento local (localhost), permite acesso direto
     if (import.meta.env.DEV) {
       return { user: { id: "dev-user", email: "dev@local.com" } as any };
     }
 
+    // Na Vercel (cliente), se não estiver autenticado, redireciona para /auth
     throw redirect({ to: "/auth" });
   },
   component: () => <Outlet />,

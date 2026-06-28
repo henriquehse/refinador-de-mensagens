@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Sparkles, Loader2, Mail, Lock, ArrowRight, ShieldCheck } from "lucide-react";
+import { Sparkles, Loader2, Mail, Lock, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,16 +41,27 @@ function AuthPage() {
     setLoading(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
-        toast.success("Conta criada com sucesso!");
+
+        if (data.session) {
+          toast.success("Conta criada e logada com sucesso!");
+          navigate({ to: "/", replace: true });
+        } else {
+          toast.success("Conta criada! Se a confirmação por e-mail estiver ativa, verifique sua caixa de entrada.");
+        }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+
+        if (data.session) {
+          toast.success("Login realizado!");
+          navigate({ to: "/", replace: true });
+        }
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erro ao autenticar");
@@ -68,15 +79,9 @@ function AuthPage() {
           redirectTo: window.location.origin,
         },
       });
-
-      if (error) {
-        if (error.message.includes("missing OAuth secret") || error.message.includes("Unsupported provider")) {
-          throw new Error("O login do Google precisa ser ativado no painel do Supabase. Utilize o login por E-mail abaixo.");
-        }
-        throw error;
-      }
+      if (error) throw error;
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao entrar com Google");
+      toast.error("O login via Google exige configuração do OAuth Secret no Supabase. Por favor, acesse via E-mail/Senha abaixo.");
       setGoogleLoading(false);
     }
   }
@@ -135,11 +140,17 @@ function AuthPage() {
             </button>
           </div>
 
+          {/* Aviso Google OAuth */}
+          <div className="mb-4 rounded-xl border border-amber-500/20 bg-amber-500/10 p-3 text-xs text-amber-200/90 flex items-start gap-2.5">
+            <AlertCircle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+            <span>Use a opção de <strong>E-mail e Senha</strong> abaixo para acessar o sistema instantaneamente na Vercel.</span>
+          </div>
+
           {/* Botão de Login com Google */}
           <Button
             type="button"
             variant="outline"
-            className="w-full h-11 bg-surface/80 hover:bg-surface-elevated border-border/80 font-medium text-sm gap-2.5 transition-all glow-ring/0 hover:glow-ring shadow-sm"
+            className="w-full h-11 bg-surface/80 hover:bg-surface-elevated border-border/80 font-medium text-sm gap-2.5 transition-all glow-ring/0 opacity-70 hover:opacity-100"
             onClick={handleGoogle}
             disabled={googleLoading}
           >

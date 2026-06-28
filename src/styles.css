@@ -9,8 +9,8 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 16px);
+  --radius-2xl: calc(var(--radius) + 10px);
+  --radius-3xl: calc(var(--radius) + 18px);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -35,36 +35,37 @@
   --color-surface-elevated: var(--surface-elevated);
   --color-glow: var(--glow);
 
-  --font-sans: "Geist", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", "Outfit", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
 }
 
-/* ---------- DARK (default app theme for high impact) ---------- */
-:root, .dark {
-  color-scheme: dark;
-  --background: oklch(0.12 0.015 250);
-  --foreground: oklch(0.98 0.005 250);
-  --surface: oklch(0.16 0.018 250);
-  --surface-elevated: oklch(0.20 0.02 250);
-  --card: oklch(0.16 0.018 250);
-  --card-foreground: oklch(0.98 0.005 250);
-  --popover: oklch(0.18 0.018 250);
-  --popover-foreground: oklch(0.98 0.005 250);
-  --primary: oklch(0.85 0.21 135);
-  --primary-foreground: oklch(0.12 0.03 140);
-  --secondary: oklch(0.24 0.02 250);
-  --secondary-foreground: oklch(0.98 0.005 250);
-  --muted: oklch(0.22 0.015 250);
-  --muted-foreground: oklch(0.70 0.015 250);
-  --accent: oklch(0.28 0.025 250);
-  --accent-foreground: oklch(0.98 0.005 250);
-  --destructive: oklch(0.62 0.22 25);
-  --destructive-foreground: oklch(0.98 0.01 90);
-  --border: oklch(0.28 0.02 250 / 0.6);
-  --input: oklch(0.22 0.018 250);
-  --ring: oklch(0.85 0.21 135 / 0.6);
-  --glow: oklch(0.85 0.21 135 / 0.25);
+/* ---------- LUMINOUS WARM-LIGHT SYSTEM (DEFAULT) ---------- */
+:root {
+  color-scheme: light;
+  --radius: 0.85rem;
+  --background: #F8F9FC;
+  --foreground: #0F172A;
+  --surface: #FFFFFF;
+  --surface-elevated: #F1F5F9;
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
+  --primary: #059669; /* Rich Emerald */
+  --primary-foreground: #FFFFFF;
+  --secondary: #F1F5F9;
+  --secondary-foreground: #0F172A;
+  --muted: #F8FAFC;
+  --muted-foreground: #64748B;
+  --accent: #E0E7FF;
+  --accent-foreground: #3730A3;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: rgba(203, 213, 225, 0.7);
+  --input: #F1F5F9;
+  --ring: rgba(5, 150, 105, 0.4);
+  --glow: rgba(5, 150, 105, 0.15);
   background-color: var(--background);
   color: var(--foreground);
 }
@@ -86,11 +87,11 @@
   *::-webkit-scrollbar { width: 0; height: 0; display: none; }
   * { scrollbar-width: none; -ms-overflow-style: none; }
 
-  ::selection { background: var(--primary); color: var(--primary-foreground); }
-  h1, h2, h3 { letter-spacing: -0.025em; }
+  ::selection { background: #059669; color: #FFFFFF; }
+  h1, h2, h3 { letter-spacing: -0.03em; font-family: "Outfit", var(--font-sans); }
 }
 
-/* Display utilities — editorial Instrument Serif italic accent */
+/* Display utilities */
 @utility font-display {
   font-family: var(--font-serif);
   font-style: italic;
@@ -99,13 +100,13 @@
 }
 
 @utility text-display {
-  font-size: clamp(2.2rem, 7vw, 4.8rem);
+  font-size: clamp(2.4rem, 7vw, 5rem);
   line-height: 1.05;
   letter-spacing: -0.04em;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-/* Hide Lovable badge / floating widget */
+/* Hide Lovable badge */
 #lovable-badge,
 .lovable-badge,
 [id*="lovable-badge"],
@@ -119,58 +120,59 @@ a[href*="lovable.dev"] {
   pointer-events: none !important;
 }
 
-/* Aurora ambient glow */
+/* Luminous pastel mesh glow background */
 @utility ambient-glow {
   position: relative;
   isolation: isolate;
   &::before {
     content: "";
     position: absolute;
-    inset: -20% -10% auto -10%;
-    height: 70vh;
+    inset: -10% -10% auto -10%;
+    height: 65vh;
     background:
-      radial-gradient(55% 45% at 50% 0%, var(--glow), transparent 70%),
-      radial-gradient(40% 35% at 15% 10%, oklch(0.70 0.22 160 / 0.18), transparent 70%),
-      radial-gradient(45% 35% at 85% 15%, oklch(0.68 0.24 280 / 0.16), transparent 72%);
+      radial-gradient(50% 40% at 50% 0%, rgba(16, 185, 129, 0.12), transparent 70%),
+      radial-gradient(40% 30% at 15% 10%, rgba(99, 102, 241, 0.10), transparent 70%),
+      radial-gradient(45% 35% at 85% 15%, rgba(245, 158, 11, 0.08), transparent 72%);
     z-index: -1;
     pointer-events: none;
-    filter: blur(12px);
+    filter: blur(20px);
   }
 }
 
 @utility grid-bg {
   background-image:
-    linear-gradient(to right, color-mix(in oklab, var(--color-foreground) 8%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--color-foreground) 8%, transparent) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
   mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent 80%);
 }
 
-/* Soft card with hover lift and glowing borders */
+/* Elevated glass card */
 @utility card-soft {
-  background: color-mix(in oklab, var(--card) 85%, transparent);
-  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(226, 232, 240, 0.8);
   backdrop-filter: blur(20px);
+  box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.05), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
   transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
   &:hover {
-    border-color: color-mix(in oklab, var(--primary) 40%, var(--color-border));
-    transform: translateY(-2px);
+    border-color: rgba(5, 150, 105, 0.3);
+    box-shadow: 0 20px 40px -15px rgba(5, 150, 105, 0.12);
   }
 }
 
 /* Glow ring around primary CTA */
 @utility glow-ring {
   box-shadow:
-    0 0 0 1px color-mix(in oklab, var(--primary) 50%, transparent),
-    0 12px 35px -10px color-mix(in oklab, var(--primary) 60%, transparent),
-    inset 0 1px 0 0 oklch(1 0 0 / 0.2);
+    0 0 0 1px rgba(5, 150, 105, 0.4),
+    0 10px 30px -8px rgba(5, 150, 105, 0.4),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
 }
 
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-8px) rotate(1deg); }
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
 }
 
 @utility animate-float {
-  animation: float-slow 6s ease-in-out infinite;
+  animation: float-gentle 5s ease-in-out infinite;
 }

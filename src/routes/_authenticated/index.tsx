@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { ArrowRight, Copy, Check, Loader2, RotateCcw, Wand2, KeyRound, ClipboardPaste, Sparkles, Zap } from "lucide-react";
+import { ArrowRight, Copy, Check, Loader2, RotateCcw, Wand2, KeyRound, ClipboardPaste, Sparkles, Zap, ShieldCheck, ArrowRightLeft } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -43,7 +43,7 @@ const CASUAL: { id: Preset; label: string }[] = [
 export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
-      { title: "Refinador de Mensagens · IA para mensagens profissionais" },
+      { title: "Refinador de Mensagens · IA para escrever com maestria" },
       {
         name: "description",
         content:
@@ -118,48 +118,88 @@ function TransformerPage() {
 
   return (
     <AppShell>
-      <section className="ambient-glow relative space-y-8">
+      <section className="ambient-glow relative space-y-10">
         
-        {/* HERO SECTION DE ALTO IMPACTO (Dribbble/Framer style) */}
-        <div className="text-center py-6 sm:py-10 space-y-5">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 backdrop-blur-md shadow-lg animate-float">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-            </span>
-            <span className="font-mono text-xs uppercase tracking-[0.2em] font-bold text-primary">
-              Inteligência Artificial de Elite
-            </span>
+        {/* HERO SECTION IMPRESSIONANTE COM DEMO DE IMPACTO */}
+        <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-b from-white via-slate-50/50 to-emerald-50/30 p-6 sm:p-12 shadow-xl shadow-slate-200/50">
+          <div className="grid gap-8 lg:grid-cols-12 items-center">
+            
+            {/* Chamada Principal */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-50 px-3.5 py-1.5 shadow-xs">
+                <Sparkles className="h-4 w-4 text-emerald-600 animate-pulse" />
+                <span className="font-sans text-xs uppercase tracking-wider font-extrabold text-emerald-800">
+                  Inteligência Artificial de Comunicação High-End
+                </span>
+              </div>
+
+              <h1 className="text-display text-slate-900 font-extrabold tracking-tight leading-none">
+                Escreva sem filtro. <br />
+                <span className="font-display text-emerald-600 font-normal">Impacte</span> em qualquer canal.
+              </h1>
+
+              <p className="max-w-xl text-base sm:text-lg text-slate-600 font-sans leading-relaxed">
+                Transforme rascunhos rápidos, áudios transcritos ou e-mails em mensagens impecáveis, prontas para impressionar no WhatsApp, Slack ou trabalho.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-4 pt-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-700 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-xs">
+                  <Zap className="h-4 w-4 text-amber-500" />
+                  <span>Resposta em instantes</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-700 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-xs">
+                  <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                  <span>Privacidade Garantida</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Showcase Interativo de Antes & Depois na Hero */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xl shadow-slate-300/60 space-y-3 font-sans">
+                
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 font-mono">Exemplo ao vivo</span>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                    <ArrowRightLeft className="h-3 w-3" /> Tom Corporativo
+                  </span>
+                </div>
+
+                {/* Antes */}
+                <div className="rounded-xl bg-slate-50 p-3.5 border border-slate-100 text-xs text-slate-600 space-y-1">
+                  <span className="font-mono text-[10px] font-bold uppercase text-slate-400 block">Original (Rascunho):</span>
+                  <p className="italic">"vc pode me mandar o relatorio hj? preciso ver o negocio la da reuniao"</p>
+                </div>
+
+                {/* Depois */}
+                <div className="rounded-xl bg-emerald-600 text-white p-3.5 shadow-md space-y-1">
+                  <span className="font-mono text-[10px] font-bold uppercase text-emerald-200 block">Refinado por IA:</span>
+                  <p className="font-semibold text-xs leading-relaxed">"Poderia, por gentileza, me encaminhar o relatório consolidado hoje? Preciso analisar os indicadores para nossa reunião."</p>
+                </div>
+
+              </div>
+            </div>
+
           </div>
-
-          <h1 className="text-display mx-auto max-w-4xl text-balance text-foreground tracking-tight px-2">
-            Escreva sem filtro.{" "}
-            <span className="font-display text-primary underline decoration-primary/30 underline-offset-8">Envie</span>{" "}
-            com perfeição.
-          </h1>
-
-          <p className="mx-auto max-w-2xl text-balance text-sm sm:text-base text-muted-foreground font-sans leading-relaxed px-4">
-            Cole rascunhos ou audios transcritos mal formatados. A IA ajusta a gramática, melhora a clareza e aplica o tom perfeito em segundos.
-          </p>
         </div>
 
         {!profile?.hasKey && (
-          <div className="mx-auto max-w-3xl flex items-start gap-3.5 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-5 shadow-xl backdrop-blur-xl">
-            <KeyRound className="mt-0.5 h-5 w-5 text-amber-400 shrink-0" />
+          <div className="mx-auto max-w-4xl flex items-start gap-3.5 rounded-2xl border border-amber-300 bg-amber-50 p-5 shadow-sm">
+            <KeyRound className="mt-0.5 h-5 w-5 text-amber-600 shrink-0" />
             <div className="flex-1 min-w-0 space-y-1">
-              <p className="font-semibold text-amber-200 text-sm">Configure sua chave gratuita do OpenRouter</p>
-              <p className="text-xs text-amber-200/80 leading-relaxed">
-                Crie uma conta gratuita em{" "}
+              <p className="font-bold text-amber-900 text-sm">Configure sua chave gratuita do OpenRouter</p>
+              <p className="text-xs text-amber-800 leading-relaxed">
+                Em 2 minutos: crie uma conta gratuita em{" "}
                 <a
                   href="https://openrouter.ai/keys"
                   target="_blank"
                   rel="noreferrer"
-                  className="font-bold underline underline-offset-2 hover:text-amber-100"
+                  className="font-bold underline underline-offset-2 hover:text-amber-950"
                 >
                   openrouter.ai/keys
                 </a>
                 , copie sua API Key e salve em{" "}
-                <Link to="/configuracoes" className="font-bold text-primary underline underline-offset-2 hover:text-primary/80">
+                <Link to="/configuracoes" className="font-bold text-emerald-700 underline underline-offset-2 hover:text-emerald-900">
                   Configurações
                 </Link>
                 .
@@ -168,13 +208,13 @@ function TransformerPage() {
           </div>
         )}
 
-        {/* PAINEL DUAL DE ENTRADA E SAÍDA COM BORDAS NEON VIBRANTES */}
+        {/* PAINEL DUAL DE ENTRADA E SAÍDA LUMINOSO */}
         <div className="grid gap-6 lg:grid-cols-2">
           
           {/* CARD 01 - MENSAGEM ORIGINAL */}
-          <div className="group relative rounded-3xl border border-emerald-500/30 bg-card/90 p-5 sm:p-6 shadow-[0_0_40px_-15px_rgba(16,185,129,0.15)] backdrop-blur-2xl transition-all duration-300 hover:border-emerald-500/50">
-            <div className="mb-4 flex items-center justify-between border-b border-emerald-500/20 pb-3">
-              <label className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] font-bold text-emerald-400">
+          <div className="card-soft rounded-3xl p-6 space-y-4 border-l-4 border-l-emerald-600">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <label className="flex items-center gap-2 font-sans text-xs font-extrabold uppercase tracking-wider text-emerald-700">
                 <Zap className="h-4 w-4" />
                 <span>01 · Sua Mensagem</span>
               </label>
@@ -183,10 +223,10 @@ function TransformerPage() {
               <button
                 type="button"
                 onClick={handlePaste}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 font-mono text-xs font-semibold text-emerald-300 transition-all hover:bg-emerald-500/20 hover:border-emerald-500/50 shadow-sm hover:scale-[1.03]"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-600/30 bg-emerald-50 px-3.5 py-1.5 text-xs font-bold text-emerald-800 transition-all hover:bg-emerald-100 shadow-xs hover:scale-[1.02]"
                 title="Colar texto da área de transferência com 1 clique"
               >
-                <ClipboardPaste className="h-3.5 w-3.5" />
+                <ClipboardPaste className="h-3.5 w-3.5 text-emerald-600" />
                 <span>Colar Texto</span>
               </button>
             </div>
@@ -195,18 +235,18 @@ function TransformerPage() {
               value={input}
               onChange={(e) => setInput(e.target.value.slice(0, 8000))}
               placeholder="Clique em 'Colar Texto' acima ou digite aqui o rascunho da sua mensagem..."
-              className="min-h-[220px] sm:min-h-[320px] resize-none border-0 bg-transparent px-0 text-base leading-relaxed text-foreground placeholder:text-muted-foreground/60 shadow-none focus-visible:ring-0"
+              className="min-h-[220px] sm:min-h-[300px] resize-none border-0 bg-transparent px-0 text-base leading-relaxed text-slate-900 placeholder:text-slate-400 shadow-none focus-visible:ring-0 font-sans"
             />
 
-            <div className="mt-2 flex justify-end">
-              <span className="font-mono text-[11px] font-medium text-muted-foreground">{input.length}/8000 caracteres</span>
+            <div className="flex justify-end border-t border-slate-100 pt-2">
+              <span className="font-mono text-[11px] font-semibold text-slate-400">{input.length}/8000 caracteres</span>
             </div>
           </div>
 
           {/* CARD 02 - MENSAGEM REFINADA */}
-          <div className="group relative rounded-3xl border border-indigo-500/30 bg-card/90 p-5 sm:p-6 shadow-[0_0_40px_-15px_rgba(99,102,241,0.15)] backdrop-blur-2xl transition-all duration-300 hover:border-indigo-500/50">
-            <div className="mb-4 flex items-center justify-between border-b border-indigo-500/20 pb-3">
-              <label className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] font-bold text-indigo-400">
+          <div className="card-soft rounded-3xl p-6 space-y-4 border-l-4 border-l-indigo-600 bg-gradient-to-br from-white to-slate-50/50">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <label className="flex items-center gap-2 font-sans text-xs font-extrabold uppercase tracking-wider text-indigo-700">
                 <Sparkles className="h-4 w-4" />
                 <span>02 · Versão Refinada</span>
               </label>
@@ -215,31 +255,31 @@ function TransformerPage() {
                 <button
                   type="button"
                   onClick={copyOutput}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-500/40 bg-indigo-500/15 px-3 py-1.5 font-mono text-xs font-semibold text-indigo-300 transition-all hover:bg-indigo-500/25 shadow-sm hover:scale-[1.03]"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-50 px-3.5 py-1.5 text-xs font-bold text-indigo-700 transition-all hover:bg-indigo-100 shadow-xs hover:scale-[1.02]"
                 >
-                  {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
                   <span>{copied ? "Copiado!" : "Copiar Texto"}</span>
                 </button>
               )}
             </div>
 
-            <div className="min-h-[220px] sm:min-h-[320px] whitespace-pre-wrap text-base leading-relaxed text-foreground break-words">
+            <div className="min-h-[220px] sm:min-h-[300px] whitespace-pre-wrap text-base leading-relaxed text-slate-900 break-words font-sans">
               {mutation.isPending ? (
-                <div className="flex h-full min-h-[220px] sm:min-h-[320px] flex-col items-center justify-center gap-3 text-muted-foreground">
-                  <Loader2 className="h-7 w-7 animate-spin text-primary" />
-                  <span className="text-shimmer font-mono text-xs uppercase tracking-[0.2em] font-bold">Refinando com IA...</span>
+                <div className="flex h-full min-h-[220px] sm:min-h-[300px] flex-col items-center justify-center gap-3 text-slate-500">
+                  <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+                  <span className="font-mono text-xs uppercase tracking-widest font-bold text-emerald-700">Refinando com IA...</span>
                 </div>
               ) : output ? (
-                <div className="rounded-2xl bg-surface/60 p-4 border border-border/40">
+                <div className="rounded-2xl bg-white p-5 border border-slate-200 shadow-sm text-slate-900 leading-relaxed font-medium">
                   {output}
                 </div>
               ) : (
-                <div className="flex h-full min-h-[220px] sm:min-h-[320px] flex-col items-center justify-center text-center p-6">
-                  <p className="font-display text-2xl text-muted-foreground/50">
-                    A versão final impecável aparecerá aqui.
+                <div className="flex h-full min-h-[220px] sm:min-h-[300px] flex-col items-center justify-center text-center p-6 space-y-2">
+                  <p className="font-display text-3xl text-slate-300 font-normal">
+                    A versão refinada aparecerá aqui.
                   </p>
-                  <p className="mt-2 text-xs text-muted-foreground/40 font-mono">
-                    Escolha o tom desejado nos botões abaixo.
+                  <p className="text-xs text-slate-400 font-sans font-medium">
+                    Escolha o tom desejado nos botões abaixo para gerar.
                   </p>
                 </div>
               )}
@@ -247,8 +287,8 @@ function TransformerPage() {
           </div>
         </div>
 
-        {/* BARRA DE AÇÃO E SELEÇÃO DE TOM DE ALTO IMPACTO */}
-        <div className="rounded-3xl border border-border/80 bg-card/80 p-6 shadow-2xl backdrop-blur-2xl space-y-6">
+        {/* BARRA DE AÇÃO E SELEÇÃO DE TOM */}
+        <div className="card-soft rounded-3xl p-6 sm:p-8 space-y-6">
           
           {/* Ações Principais */}
           <div className="flex flex-wrap items-center gap-3">
@@ -258,28 +298,28 @@ function TransformerPage() {
                 onClick={() => run(p.id)}
                 disabled={mutation.isPending}
                 className={cn(
-                  "h-12 px-6 font-semibold text-sm gap-2.5 flex-1 sm:flex-initial rounded-xl transition-all shadow-lg hover:scale-[1.02]",
+                  "h-13 px-7 font-bold text-sm gap-2.5 flex-1 sm:flex-initial rounded-2xl transition-all shadow-md hover:scale-[1.02]",
                   p.id === "improve" 
-                    ? "bg-primary text-primary-foreground glow-ring" 
-                    : "bg-surface-elevated text-foreground border border-border hover:bg-accent",
+                    ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/30" 
+                    : "bg-slate-900 hover:bg-slate-800 text-white shadow-slate-900/20",
                 )}
                 title={p.hint}
               >
-                {p.id === "improve" ? <Wand2 className="h-4 w-4" /> : <RotateCcw className="h-4 w-4" />}
+                {p.id === "improve" ? <Wand2 className="h-4 w-4 text-emerald-200" /> : <RotateCcw className="h-4 w-4" />}
                 <span>{p.label}</span>
                 {mutation.isPending && activePreset === p.id && (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 )}
               </Button>
             ))}
-            <div className="ml-auto hidden items-center gap-2 font-mono text-xs text-muted-foreground sm:flex">
-              <ArrowRight className="h-3.5 w-3.5 text-primary" />
-              <span>Refinar mantém o sentido original com gramática impecável</span>
+            <div className="ml-auto hidden items-center gap-2 font-sans text-xs font-semibold text-slate-500 sm:flex">
+              <ArrowRight className="h-4 w-4 text-emerald-600" />
+              <span>Refinar mantém o sentido original com gramática perfeita</span>
             </div>
           </div>
 
           {/* Grupos de Tons com Destaque */}
-          <div className="grid gap-4 border-t border-border/60 pt-6 sm:grid-cols-2">
+          <div className="grid gap-6 border-t border-slate-100 pt-6 sm:grid-cols-2">
             <ToneGroup
               label="Tons Formais"
               options={FORMAL}
@@ -300,8 +340,8 @@ function TransformerPage() {
         </div>
 
         {profile && (
-          <p className="text-center font-mono text-xs text-muted-foreground break-all py-2">
-            Modelo de IA ativo: <span className="text-primary font-semibold">{profile.model}</span>
+          <p className="text-center font-mono text-xs text-slate-500 font-medium pb-4">
+            Modelo de IA ativo: <span className="text-emerald-700 font-bold">{profile.model}</span>
           </p>
         )}
       </section>
@@ -325,9 +365,9 @@ function ToneGroup({
   accentColor: "emerald" | "indigo";
 }) {
   return (
-    <div className="space-y-2">
-      <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground font-bold flex items-center gap-1.5">
-        <span className={cn("h-1.5 w-1.5 rounded-full", accentColor === "emerald" ? "bg-emerald-400" : "bg-indigo-400")} />
+    <div className="space-y-2.5">
+      <p className="font-sans text-xs uppercase tracking-wider text-slate-500 font-extrabold flex items-center gap-2">
+        <span className={cn("h-2 w-2 rounded-full", accentColor === "emerald" ? "bg-emerald-600" : "bg-indigo-600")} />
         {label}
       </p>
       <div className="grid grid-cols-3 gap-2">
@@ -340,13 +380,13 @@ function ToneGroup({
               onClick={() => onPick(opt.id)}
               disabled={loading}
               className={cn(
-                "rounded-xl border border-border/80 bg-surface px-3 py-2.5 text-xs font-semibold font-mono transition-all hover:bg-surface-elevated disabled:cursor-not-allowed disabled:opacity-50 truncate shadow-sm hover:scale-[1.02]",
-                isActive && "border-primary bg-primary/15 text-primary ring-1 ring-primary/50 font-bold",
-                isLoading && "ring-2 ring-primary animate-pulse",
+                "rounded-xl border border-slate-200 bg-white px-3 py-3 text-xs font-bold font-sans transition-all hover:bg-slate-50 text-slate-700 disabled:cursor-not-allowed disabled:opacity-50 truncate shadow-xs hover:scale-[1.02]",
+                isActive && "border-emerald-600 bg-emerald-50 text-emerald-800 ring-2 ring-emerald-600/30 shadow-sm font-extrabold",
+                isLoading && "ring-2 ring-emerald-600 animate-pulse",
               )}
             >
               {isLoading ? (
-                <Loader2 className="mx-auto h-4 w-4 animate-spin text-primary" />
+                <Loader2 className="mx-auto h-4 w-4 animate-spin text-emerald-600" />
               ) : (
                 opt.label
               )}

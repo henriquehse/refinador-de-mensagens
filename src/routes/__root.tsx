@@ -77,32 +77,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Refinador de Mensagens · IA para escrever melhor" },
+      { title: "Refinador de Mensagens · IA para escrever com maestria" },
       {
         name: "description",
         content:
           "Cole, escolha o tom e copie. Refine mensagens com IA antes de enviar — formal, coloquial ou só mais clara.",
       },
-      { property: "og:title", content: "Refinador de Mensagens · IA para escrever melhor" },
-      {
-        property: "og:description",
-        content: "Refine suas mensagens com IA antes de enviar.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "Refinador de Mensagens · IA para escrever melhor" },
-      { name: "description", content: "Heartfelt Helper is a web application designed to assist users in managing and tracking their personal health and wellness goals." },
-      { property: "og:description", content: "Heartfelt Helper is a web application designed to assist users in managing and tracking their personal health and wellness goals." },
-      { name: "twitter:description", content: "Heartfelt Helper is a web application designed to assist users in managing and tracking their personal health and wellness goals." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/224a977c-61ba-4475-ace6-8aeb50fd2d1d/id-preview-b2eebe7e--d28616f0-f0d0-468b-aa59-2197246c98c2.lovable.app-1782628087376.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/224a977c-61ba-4475-ace6-8aeb50fd2d1d/id-preview-b2eebe7e--d28616f0-f0d0-468b-aa59-2197246c98c2.lovable.app-1782628087376.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Outfit:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500;600&display=swap",
       },
       { rel: "stylesheet", href: appCss },
     ],
@@ -115,7 +102,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
         <HeadContent />
       </head>
@@ -132,7 +119,6 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
   );

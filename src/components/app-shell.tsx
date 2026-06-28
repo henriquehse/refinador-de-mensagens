@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Sparkles, History, Settings, LogOut, Star, Download } from "lucide-react";
+import { Sparkles, History, Settings, LogOut, Star, Download, X } from "lucide-react";
 import { useState, useEffect, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -22,6 +22,7 @@ export function AppShell({ children }: AppShellProps) {
   const queryClient = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showBottomBar, setShowBottomBar] = useState(true);
 
   useEffect(() => {
     const handler = (e: any) => {
@@ -44,10 +45,11 @@ export function AppShell({ children }: AppShellProps) {
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === "accepted") {
         toast.success("Aplicativo instalado com sucesso!");
+        setShowBottomBar(false);
       }
       setDeferredPrompt(null);
     } else {
-      toast.info("Para instalar no celular ou PC: clique no ícone de instalar na barra do navegador ou em 'Adicionar à tela de início'.");
+      toast.info("Para instalar no celular ou PC: clique no ícone de instalar na barra do seu navegador ou selecione 'Adicionar à tela de início'.");
     }
   }
 
@@ -69,9 +71,9 @@ export function AppShell({ children }: AppShellProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F9FC] text-slate-900 flex flex-col font-sans selection:bg-emerald-600 selection:text-white">
+    <div className="min-h-screen bg-[#F8F9FC] text-slate-900 flex flex-col font-sans selection:bg-emerald-600 selection:text-white pb-12 sm:pb-0">
       {/* Cabeçalho Luminoso com Separação Nítida */}
-      <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/80 backdrop-blur-xl shadow-sm">
+      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/80 backdrop-blur-xl shadow-sm">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link to="/" className="group flex items-center gap-3 transition-transform hover:scale-[1.02]">
             <span className="relative grid h-10 w-10 place-items-center rounded-2xl bg-emerald-600 text-white shadow-md shadow-emerald-600/30 transition-transform group-hover:rotate-[6deg]">
@@ -104,15 +106,6 @@ export function AppShell({ children }: AppShellProps) {
                 </Link>
               );
             })}
-            
-            <button
-              onClick={handleInstallPWA}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-600/30 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition-all shadow-xs"
-              title="Instalar como aplicativo no celular ou PC"
-            >
-              <Download className="h-3.5 w-3.5 text-emerald-600" />
-              <span>Instalar App</span>
-            </button>
 
             <div className="h-4 w-px bg-slate-200 mx-1" />
             <button
@@ -149,15 +142,6 @@ export function AppShell({ children }: AppShellProps) {
           })}
 
           <button
-            onClick={handleInstallPWA}
-            className="flex shrink-0 flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 text-[10px] font-bold text-emerald-700 bg-emerald-50"
-            title="Instalar App"
-          >
-            <Download className="h-4 w-4 text-emerald-600" />
-            <span>Instalar</span>
-          </button>
-
-          <button
             onClick={handleSignOut}
             className="flex shrink-0 flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 text-[10px] font-bold text-rose-600 hover:bg-rose-50"
             aria-label="Sair"
@@ -170,6 +154,39 @@ export function AppShell({ children }: AppShellProps) {
 
       {/* Conteúdo Principal */}
       <main className="flex-1 mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">{children}</main>
+
+      {/* LINHA DISCRETA COLADA NA BASE PARA INSTALAR O APP (PWA BANNER) */}
+      {showBottomBar && (
+        <aside className="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 text-white backdrop-blur-lg border-t border-slate-800 px-4 py-2.5 shadow-2xl">
+          <div className="mx-auto max-w-6xl flex items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <span className="relative flex h-2 w-2 shrink-0">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+              </span>
+              <span className="font-sans font-bold truncate text-slate-100">
+                Instale como App <span className="text-emerald-400 font-mono font-medium hidden sm:inline">→ Acesso + rápido!</span>
+              </span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={handleInstallPWA}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-500 shadow-md transition-all active:scale-95"
+              >
+                <Download className="h-3.5 w-3.5" />
+                <span>Instalar</span>
+              </button>
+              <button
+                onClick={() => setShowBottomBar(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-md hover:bg-slate-800 transition-colors"
+                aria-label="Fechar aviso"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </aside>
+      )}
 
       {/* Rodapé Elegante com Contraste */}
       <footer className="border-t border-slate-200 bg-white py-8 text-center text-xs text-slate-500 backdrop-blur-xl">

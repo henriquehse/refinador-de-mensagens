@@ -1,10 +1,12 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Sparkles, Loader2, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { Sparkles, Loader2, Mail, Lock, ArrowRight, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -18,6 +20,10 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
   useEffect(() => {
@@ -30,10 +36,32 @@ function AuthPage() {
     return () => sub.subscription.unsubscribe();
   }, [navigate]);
 
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      if (mode === "signup") {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: window.location.origin },
+        });
+        if (error) throw error;
+        toast.success("Conta criada com sucesso!");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao autenticar");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function handleGoogle() {
     setGoogleLoading(true);
     try {
-      // Tenta realizar a autenticação via Supabase padrão
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -42,11 +70,10 @@ function AuthPage() {
       });
 
       if (error) {
-        // Fallback para o módulo do Lovable caso esteja rodando na nuvem
-        const result = await lovable.auth.signInWithOAuth("google", {
-          redirect_uri: window.location.origin,
-        });
-        if (result.error) throw result.error;
+        if (error.message.includes("missing OAuth secret") || error.message.includes("Unsupported provider")) {
+          throw new Error("O login do Google precisa ser ativado no painel do Supabase. Utilize o login por E-mail abaixo.");
+        }
+        throw error;
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erro ao entrar com Google");
@@ -60,7 +87,7 @@ function AuthPage() {
       <div className="absolute inset-0 grid-bg opacity-70" aria-hidden />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[400px] bg-primary/15 blur-[140px] rounded-full pointer-events-none" />
 
-      <div className="relative w-full max-w-md space-y-8">
+      <div className="relative w-full max-w-md space-y-6">
         {/* Cabeçalho / Logo */}
         <div className="text-center space-y-3">
           <Link to="/auth" className="inline-flex items-center gap-3 group transition-transform hover:scale-[1.02]">
@@ -77,49 +104,113 @@ function AuthPage() {
           </p>
         </div>
 
-        {/* Card Principal de Autenticação Exclusiva Google */}
-        <div className="rounded-3xl border border-border/80 bg-card/80 p-8 shadow-2xl backdrop-blur-2xl transition-all space-y-6">
-          <div className="text-center space-y-2">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-              Bem-vindo de volta
-            </h1>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Acesse sua conta com segurança para criar, refinar e transformar suas mensagens profissionais.
-            </p>
+        {/* Card Principal de Autenticação */}
+        <div className="rounded-3xl border border-border/80 bg-card/80 p-6 sm:p-8 shadow-2xl backdrop-blur-2xl transition-all">
+          
+          {/* Seleção de Abas */}
+          <div className="grid grid-cols-2 gap-1 rounded-xl bg-surface p-1 border border-border/50 mb-6 font-mono text-xs">
+            <button
+              type="button"
+              onClick={() => setMode("signin")}
+              className={cn(
+                "rounded-lg py-2 transition-all duration-200 font-medium text-center",
+                mode === "signin"
+                  ? "bg-surface-elevated text-foreground shadow-sm border border-border/60"
+                  : "text-muted-foreground hover:text-foreground hover:bg-surface-elevated/40"
+              )}
+            >
+              Entrar
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("signup")}
+              className={cn(
+                "rounded-lg py-2 transition-all duration-200 font-medium text-center",
+                mode === "signup"
+                  ? "bg-surface-elevated text-foreground shadow-sm border border-border/60"
+                  : "text-muted-foreground hover:text-foreground hover:bg-surface-elevated/40"
+              )}
+            >
+              Criar Conta
+            </button>
           </div>
 
-          {/* Destaques rápidos */}
-          <div className="space-y-2 py-2 border-y border-border/40">
-            <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
-              <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
-              <span>Acesso instantâneo sem necessidade de senhas</span>
-            </div>
-            <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
-              <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
-              <span>Histórico e configurações sincronizadas na nuvem</span>
-            </div>
-          </div>
-
-          {/* Botão Único de Login com Google */}
+          {/* Botão de Login com Google */}
           <Button
             type="button"
             variant="outline"
-            className="w-full h-12 bg-surface hover:bg-surface-elevated border-border font-medium text-sm gap-3 transition-all glow-ring/0 hover:glow-ring shadow-md hover:scale-[1.01]"
+            className="w-full h-11 bg-surface/80 hover:bg-surface-elevated border-border/80 font-medium text-sm gap-2.5 transition-all glow-ring/0 hover:glow-ring shadow-sm"
             onClick={handleGoogle}
             disabled={googleLoading}
           >
-            {googleLoading ? <Loader2 className="h-5 w-5 animate-spin text-primary" /> : <GoogleIcon />}
-            <span className="text-foreground font-semibold">Continuar com o Google</span>
+            {googleLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <GoogleIcon />}
+            <span>Continuar com Google</span>
           </Button>
 
-          <p className="text-[11px] text-center text-muted-foreground leading-relaxed">
-            Ao continuar, você concorda em conectar sua conta do Google de forma segura.
-          </p>
+          {/* Divisor */}
+          <div className="my-6 flex items-center gap-3 text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
+            <div className="h-px flex-1 bg-border/60" />
+            <span>ou via e-mail</span>
+            <div className="h-px flex-1 bg-border/60" />
+          </div>
+
+          {/* Formulário de Credenciais */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                E-mail
+              </Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  placeholder="seu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-surface/90 border-border/80 pl-9 h-11 text-sm focus-visible:ring-primary/40 focus-visible:border-primary/60 transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                Senha
+              </Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type="password"
+                  autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                  required
+                  minLength={6}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-surface/90 border-border/80 pl-9 h-11 text-sm focus-visible:ring-primary/40 focus-visible:border-primary/60 transition-all"
+                />
+              </div>
+            </div>
+
+            <Button type="submit" className="w-full h-11 font-medium gap-2 glow-ring mt-2" disabled={loading}>
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  <span>{mode === "signin" ? "Entrar na conta" : "Criar minha conta"}</span>
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </form>
         </div>
 
         {/* Rodapé de Segurança */}
-        <div className="flex items-center justify-center gap-2 text-[11px] font-mono text-muted-foreground">
-          <ShieldCheck className="h-4 w-4 text-primary" />
+        <div className="flex items-center justify-center gap-1.5 text-[11px] font-mono text-muted-foreground">
+          <ShieldCheck className="h-3.5 w-3.5 text-primary" />
           <span>Autenticação protegida via OAuth 2.0 & Supabase</span>
         </div>
       </div>
@@ -129,7 +220,7 @@ function AuthPage() {
 
 function GoogleIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0" aria-hidden>
+    <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" aria-hidden>
       <path fill="#EA4335" d="M12 10.2v3.9h5.4c-.2 1.4-1.6 4-5.4 4-3.2 0-5.9-2.7-5.9-6s2.6-6 5.9-6c1.8 0 3.1.8 3.8 1.4l2.6-2.5C16.7 3.4 14.6 2.4 12 2.4 6.7 2.4 2.4 6.7 2.4 12s4.3 9.6 9.6 9.6c5.6 0 9.3-3.9 9.3-9.4 0-.6-.1-1.1-.2-1.6H12z"/>
     </svg>
   );

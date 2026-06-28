@@ -4,7 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async () => {
     if (typeof window === "undefined") {
-      return { user: { id: "dev-user", email: "dev@local.com" } as any };
+      if (import.meta.env.DEV) {
+        return { user: { id: "dev-user", email: "dev@local.com" } as any };
+      }
+      throw redirect({ to: "/auth" });
     }
 
     try {
@@ -14,8 +17,12 @@ export const Route = createFileRoute("/_authenticated")({
       // ignore
     }
 
-    // Bypass temporário para testes e desenvolvimento local
-    return { user: { id: "dev-user", email: "dev@local.com" } as any };
+    // No ambiente local de desenvolvimento, permite bypass. Em produção (Vercel), exige login.
+    if (import.meta.env.DEV) {
+      return { user: { id: "dev-user", email: "dev@local.com" } as any };
+    }
+
+    throw redirect({ to: "/auth" });
   },
   component: () => <Outlet />,
 });

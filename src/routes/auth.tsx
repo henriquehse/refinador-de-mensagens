@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Sparkles, Loader2, Mail, Lock, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
+import { Sparkles, Loader2, Mail, Lock, ArrowRight, ShieldCheck, AlertCircle, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +25,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -39,6 +40,8 @@ function AuthPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    setSignupSuccess(false);
+
     try {
       if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
@@ -46,13 +49,15 @@ function AuthPage() {
           password,
           options: { emailRedirectTo: window.location.origin },
         });
+
         if (error) throw error;
 
         if (data.session) {
-          toast.success("Conta criada e logada com sucesso!");
+          toast.success("Conta criada e autenticada!");
           navigate({ to: "/", replace: true });
         } else {
-          toast.success("Conta criada! Se a confirmação por e-mail estiver ativa, verifique sua caixa de entrada.");
+          setSignupSuccess(true);
+          toast.success("Conta criada com sucesso!");
         }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -63,8 +68,10 @@ function AuthPage() {
           navigate({ to: "/", replace: true });
         }
       }
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao autenticar");
+    } catch (err: any) {
+      console.error("[Auth Error]", err);
+      const msg = err?.message || "Erro ao conectar com o serviço de autenticação.";
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -81,7 +88,7 @@ function AuthPage() {
       });
       if (error) throw error;
     } catch (err) {
-      toast.error("O login via Google exige configuração do OAuth Secret no Supabase. Por favor, acesse via E-mail/Senha abaixo.");
+      toast.error("O login via Google exige configuração no Supabase. Use E-mail e Senha abaixo.");
       setGoogleLoading(false);
     }
   }
@@ -116,7 +123,7 @@ function AuthPage() {
           <div className="grid grid-cols-2 gap-1 rounded-xl bg-surface p-1 border border-border/50 mb-6 font-mono text-xs">
             <button
               type="button"
-              onClick={() => setMode("signin")}
+              onClick={() => { setMode("signin"); setSignupSuccess(false); }}
               className={cn(
                 "rounded-lg py-2 transition-all duration-200 font-medium text-center",
                 mode === "signin"
@@ -128,7 +135,7 @@ function AuthPage() {
             </button>
             <button
               type="button"
-              onClick={() => setMode("signup")}
+              onClick={() => { setMode("signup"); setSignupSuccess(false); }}
               className={cn(
                 "rounded-lg py-2 transition-all duration-200 font-medium text-center",
                 mode === "signup"
@@ -140,17 +147,23 @@ function AuthPage() {
             </button>
           </div>
 
-          {/* Aviso Google OAuth */}
-          <div className="mb-4 rounded-xl border border-amber-500/20 bg-amber-500/10 p-3 text-xs text-amber-200/90 flex items-start gap-2.5">
-            <AlertCircle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
-            <span>Use a opção de <strong>E-mail e Senha</strong> abaixo para acessar o sistema instantaneamente na Vercel.</span>
-          </div>
+          {signupSuccess && (
+            <div className="mb-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-xs text-emerald-300 space-y-2">
+              <div className="flex items-center gap-2 font-semibold">
+                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                <span>Conta criada com sucesso!</span>
+              </div>
+              <p className="text-emerald-200/80 leading-relaxed">
+                Se a confirmação de e-mail estiver ativa no Supabase, verifique sua caixa de entrada. Caso contrário, altere para a aba <strong>Entrar</strong> e acesse com suas credenciais.
+              </p>
+            </div>
+          )}
 
           {/* Botão de Login com Google */}
           <Button
             type="button"
             variant="outline"
-            className="w-full h-11 bg-surface/80 hover:bg-surface-elevated border-border/80 font-medium text-sm gap-2.5 transition-all glow-ring/0 opacity-70 hover:opacity-100"
+            className="w-full h-11 bg-surface/80 hover:bg-surface-elevated border-border/80 font-medium text-sm gap-2.5 transition-all glow-ring/0 opacity-80 hover:opacity-100"
             onClick={handleGoogle}
             disabled={googleLoading}
           >
@@ -188,7 +201,7 @@ function AuthPage() {
 
             <div className="space-y-1.5">
               <Label htmlFor="password" className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                Senha
+                Senha (mínimo 6 caracteres)
               </Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

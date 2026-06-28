@@ -375,32 +375,6 @@ function TransformerPage() {
           </div>
         </div>
 
-        {/* BANNER PROMOCIONAL DE ALTA CONVERSÃO (MONETIZAÇÃO FUTURA) */}
-        <div className="relative overflow-hidden rounded-3xl border border-indigo-200 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-6 sm:p-8 text-white shadow-2xl">
-          <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div className="space-y-2 text-center sm:text-left">
-              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/20 px-3 py-1 font-mono text-[11px] font-bold uppercase text-emerald-400 border border-emerald-500/30">
-                <Sparkle className="h-3.5 w-3.5" />
-                <span>Soluções Premium de Produtividade</span>
-              </div>
-              <h3 className="text-xl sm:text-2xl font-extrabold tracking-tight">
-                Acelere sua Comunicação Profissional
-              </h3>
-              <p className="text-xs sm:text-sm text-indigo-200/80 max-w-xl">
-                Conheça nossos treinamentos e ferramentas avançadas para dominar a Inteligência Artificial e fechar mais negócios.
-              </p>
-            </div>
-
-            <a
-              href="#"
-              onClick={(e) => { e.preventDefault(); toast.info("Link promocional em breve!"); }}
-              className="inline-flex items-center gap-2 rounded-2xl bg-emerald-500 px-6 py-3.5 text-xs font-extrabold text-slate-950 transition-all hover:bg-emerald-400 shadow-lg shadow-emerald-500/20 shrink-0 hover:scale-[1.03]"
-            >
-              <span>Garantir Acesso Premium</span>
-              <ExternalLink className="h-4 w-4" />
-            </a>
-          </div>
-        </div>
 
         {profile && (
           <p className="text-center font-mono text-xs text-slate-500 font-medium pb-4">

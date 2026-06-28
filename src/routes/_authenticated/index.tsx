@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { ArrowRight, Copy, Check, Loader2, RotateCcw, Wand2, KeyRound, ClipboardPaste, Sparkles, Zap, ShieldCheck, ArrowRightLeft } from "lucide-react";
+import { ArrowRight, Copy, Check, Loader2, RotateCcw, Wand2, KeyRound, ClipboardPaste, Sparkles, Zap, ShieldCheck, ArrowRightLeft, Trash2, Mic, ExternalLink, Sparkle } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -68,6 +68,7 @@ function TransformerPage() {
   const [output, setOutput] = useState("");
   const [activePreset, setActivePreset] = useState<Preset>("improve");
   const [copied, setCopied] = useState(false);
+  const [showClearAlert, setShowClearAlert] = useState(false);
 
   const mutation = useMutation({
     mutationFn: (preset: Preset) =>
@@ -106,6 +107,13 @@ function TransformerPage() {
     } catch (err) {
       toast.error("Por favor, permita o acesso à área de transferência ou use Ctrl+V.");
     }
+  }
+
+  function handleConfirmClear() {
+    setInput("");
+    setOutput("");
+    setShowClearAlert(false);
+    toast.info("Caixa de texto limpa.");
   }
 
   async function copyOutput() {
@@ -208,33 +216,61 @@ function TransformerPage() {
           </div>
         )}
 
+        {/* CARD INFORMATIVO: DICA DE DITADO POR VOZ */}
+        <div className="mx-auto max-w-4xl rounded-2xl border border-indigo-200/80 bg-gradient-to-r from-indigo-50/90 via-white to-emerald-50/90 p-4 sm:p-5 shadow-sm flex items-start sm:items-center gap-4">
+          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-indigo-600 text-white shadow-md shadow-indigo-600/30">
+            <Mic className="h-5 w-5 animate-pulse" />
+          </div>
+          <div className="flex-1 text-xs space-y-0.5">
+            <p className="font-extrabold text-indigo-950 font-sans text-sm">🎙️ Dica de Ouro: Fale em vez de digitar!</p>
+            <p className="text-slate-600 leading-relaxed">
+              Use o microfone do teclado do seu celular ou PC para ditar suas ideias livremente. Mesmo que a fala saia confusa ou sem pontuação, a IA organizará a gramática, aplicará a pontuação perfeita e reduzirá o texto para uma mensagem direta.
+            </p>
+          </div>
+        </div>
+
         {/* PAINEL DUAL DE ENTRADA E SAÍDA LUMINOSO */}
         <div className="grid gap-6 lg:grid-cols-2">
           
           {/* CARD 01 - MENSAGEM ORIGINAL */}
           <div className="card-soft rounded-3xl p-6 space-y-4 border-l-4 border-l-emerald-600">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3 flex-wrap gap-2">
               <label className="flex items-center gap-2 font-sans text-xs font-extrabold uppercase tracking-wider text-emerald-700">
                 <Zap className="h-4 w-4" />
                 <span>01 · Sua Mensagem</span>
               </label>
               
-              {/* BOTÃO MÁGICO DE COLAR EM 1 CLIQUE */}
-              <button
-                type="button"
-                onClick={handlePaste}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-600/30 bg-emerald-50 px-3.5 py-1.5 text-xs font-bold text-emerald-800 transition-all hover:bg-emerald-100 shadow-xs hover:scale-[1.02]"
-                title="Colar texto da área de transferência com 1 clique"
-              >
-                <ClipboardPaste className="h-3.5 w-3.5 text-emerald-600" />
-                <span>Colar Texto</span>
-              </button>
+              <div className="flex items-center gap-2">
+                {/* BOTÃO LIMPAR COM CONFIRMAÇÃO */}
+                {input.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowClearAlert(true)}
+                    className="inline-flex items-center gap-1 rounded-xl border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs font-bold text-rose-600 transition-all hover:bg-rose-100 shadow-xs"
+                    title="Limpar texto digitado"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    <span>Limpar</span>
+                  </button>
+                )}
+
+                {/* BOTÃO MÁGICO DE COLAR EM 1 CLIQUE */}
+                <button
+                  type="button"
+                  onClick={handlePaste}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-600/30 bg-emerald-50 px-3.5 py-1.5 text-xs font-bold text-emerald-800 transition-all hover:bg-emerald-100 shadow-xs hover:scale-[1.02]"
+                  title="Colar texto da área de transferência com 1 clique"
+                >
+                  <ClipboardPaste className="h-3.5 w-3.5 text-emerald-600" />
+                  <span>Colar Texto</span>
+                </button>
+              </div>
             </div>
 
             <Textarea
               value={input}
               onChange={(e) => setInput(e.target.value.slice(0, 8000))}
-              placeholder="Clique em 'Colar Texto' acima ou digite aqui o rascunho da sua mensagem..."
+              placeholder="Clique em 'Colar Texto' acima, digite ou dite o rascunho da sua mensagem..."
               className="min-h-[220px] sm:min-h-[300px] resize-none border-0 bg-transparent px-0 text-base leading-relaxed text-slate-900 placeholder:text-slate-400 shadow-none focus-visible:ring-0 font-sans"
             />
 
@@ -339,11 +375,71 @@ function TransformerPage() {
           </div>
         </div>
 
+        {/* BANNER PROMOCIONAL DE ALTA CONVERSÃO (MONETIZAÇÃO FUTURA) */}
+        <div className="relative overflow-hidden rounded-3xl border border-indigo-200 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-6 sm:p-8 text-white shadow-2xl">
+          <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="space-y-2 text-center sm:text-left">
+              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/20 px-3 py-1 font-mono text-[11px] font-bold uppercase text-emerald-400 border border-emerald-500/30">
+                <Sparkle className="h-3.5 w-3.5" />
+                <span>Soluções Premium de Produtividade</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-extrabold tracking-tight">
+                Acelere sua Comunicação Profissional
+              </h3>
+              <p className="text-xs sm:text-sm text-indigo-200/80 max-w-xl">
+                Conheça nossos treinamentos e ferramentas avançadas para dominar a Inteligência Artificial e fechar mais negócios.
+              </p>
+            </div>
+
+            <a
+              href="#"
+              onClick={(e) => { e.preventDefault(); toast.info("Link promocional em breve!"); }}
+              className="inline-flex items-center gap-2 rounded-2xl bg-emerald-500 px-6 py-3.5 text-xs font-extrabold text-slate-950 transition-all hover:bg-emerald-400 shadow-lg shadow-emerald-500/20 shrink-0 hover:scale-[1.03]"
+            >
+              <span>Garantir Acesso Premium</span>
+              <ExternalLink className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+
         {profile && (
           <p className="text-center font-mono text-xs text-slate-500 font-medium pb-4">
             Modelo de IA ativo: <span className="text-emerald-700 font-bold">{profile.model}</span>
           </p>
         )}
+
+        {/* MODAL / ALERT DE CONFIRMAÇÃO DE LIMPEZA */}
+        {showClearAlert && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-in fade-in">
+            <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl border border-slate-200 space-y-4 text-center">
+              <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-rose-100 text-rose-600">
+                <Trash2 className="h-6 w-6" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-slate-900">Limpar texto?</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Tem certeza que deseja apagar a mensagem atual? Essa ação limpará os campos de entrada e resultado.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowClearAlert(false)}
+                  className="rounded-xl font-bold text-xs h-11 border-slate-200 hover:bg-slate-100 text-slate-700"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleConfirmClear}
+                  className="rounded-xl font-bold text-xs h-11 bg-rose-600 hover:bg-rose-700 text-white shadow-md shadow-rose-600/20"
+                >
+                  Sim, Limpar
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </section>
     </AppShell>
   );

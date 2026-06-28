@@ -1,9 +1,10 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Sparkles, History, Settings, LogOut, Star } from "lucide-react";
-import { type ReactNode } from "react";
+import { Sparkles, History, Settings, LogOut, Star, Download } from "lucide-react";
+import { useState, useEffect, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface AppShellProps {
   children: ReactNode;
@@ -20,6 +21,35 @@ export function AppShell({ children }: AppShellProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("beforeinstallprompt", handler);
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("beforeinstallprompt", handler);
+      }
+    };
+  }, []);
+
+  async function handleInstallPWA() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") {
+        toast.success("Aplicativo instalado com sucesso!");
+      }
+      setDeferredPrompt(null);
+    } else {
+      toast.info("Para instalar no celular ou PC: clique no ícone de instalar na barra do navegador ou em 'Adicionar à tela de início'.");
+    }
+  }
 
   async function handleSignOut() {
     try {
@@ -74,6 +104,16 @@ export function AppShell({ children }: AppShellProps) {
                 </Link>
               );
             })}
+            
+            <button
+              onClick={handleInstallPWA}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-600/30 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition-all shadow-xs"
+              title="Instalar como aplicativo no celular ou PC"
+            >
+              <Download className="h-3.5 w-3.5 text-emerald-600" />
+              <span>Instalar App</span>
+            </button>
+
             <div className="h-4 w-px bg-slate-200 mx-1" />
             <button
               onClick={handleSignOut}
@@ -107,6 +147,16 @@ export function AppShell({ children }: AppShellProps) {
               </Link>
             );
           })}
+
+          <button
+            onClick={handleInstallPWA}
+            className="flex shrink-0 flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 text-[10px] font-bold text-emerald-700 bg-emerald-50"
+            title="Instalar App"
+          >
+            <Download className="h-4 w-4 text-emerald-600" />
+            <span>Instalar</span>
+          </button>
+
           <button
             onClick={handleSignOut}
             className="flex shrink-0 flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 text-[10px] font-bold text-rose-600 hover:bg-rose-50"

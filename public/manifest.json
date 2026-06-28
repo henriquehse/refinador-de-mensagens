@@ -1,0 +1,24 @@
+{
+  "short_name": "Refinador",
+  "name": "Refinador de Mensagens IA",
+  "description": "Refine suas mensagens profissionais com Inteligência Artificial em segundos.",
+  "icons": [
+    {
+      "src": "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/224a977c-61ba-4475-ace6-8aeb50fd2d1d/id-preview-b2eebe7e--d28616f0-f0d0-468b-aa59-2197246c98c2.lovable.app-1782628087376.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/224a977c-61ba-4475-ace6-8aeb50fd2d1d/id-preview-b2eebe7e--d28616f0-f0d0-468b-aa59-2197246c98c2.lovable.app-1782628087376.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#F8F9FC",
+  "theme_color": "#059669",
+  "display": "standalone",
+  "orientation": "portrait-primary"
+}

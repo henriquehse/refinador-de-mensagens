@@ -1,19 +1,24 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async () => {
+    // No servidor (SSR), não bloqueia para permitir que o cliente hidrate a sessão do localStorage
+    if (typeof window === "undefined") {
+      return { user: null };
+    }
+
     try {
-      if (typeof window !== "undefined") {
-        const { data } = await supabase.auth.getUser();
-        if (data?.user) return { user: data.user };
+      const { data, error } = await supabase.auth.getUser();
+      if (!error && data?.user) {
+        return { user: data.user };
       }
     } catch (e) {
       // ignore
     }
 
-    // Retorna um usuário visitante padrão para liberar o acesso automático direto à aplicação
-    return { user: { id: "00000000-0000-0000-0000-000000000000", email: "visitante@refinador.app" } as any };
+    // Se no cliente não houver usuário autenticado no Supabase, redireciona para a tela de login
+    throw redirect({ to: "/auth" });
   },
   component: () => <Outlet />,
 });
